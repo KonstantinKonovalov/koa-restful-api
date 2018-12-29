@@ -1,0 +1,21 @@
+{
+  "name": "koa-rest-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Konstantin Konovalov <konstantin.-.konovalov@mail.ru>",
+  "license": "MIT",
+  "dependencies": {
+    "@koa/cors": "2",
+    "koa": "^2.6.2",
+    "koa-bodyparser": "^4.2.1",
+    "koa-morgan": "^1.0.1",
+    "koa-router": "^7.4.0",
+    "serialize-javascript": "^1.6.0"
+  },
+  "scripts": {
+    "dev": "nodemon server"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
+  }
+}
