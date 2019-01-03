@@ -4,10 +4,17 @@ const serialize = require('serialize-javascript');
 const bodyParser = require('koa-bodyparser');
 const cors = require('@koa/cors');
 
+const mongoose = require('mongoose');
+
 const { router } = require('./api/routes/todos');
 const { rootRouter } = require('./api/routes');
 
 const app = new Koa();
+
+mongoose.connect(`mongodb+srv://konstantin_konovalov:${process.env.DB_PASS}@mongodbcluster-vasux.mongodb.net/test?retryWrites=true`, {
+    useNewUrlParser: true,
+    dbName: 'TodosDB'
+});
 
 app.use(morgan('dev'));
 app.use(bodyParser());
