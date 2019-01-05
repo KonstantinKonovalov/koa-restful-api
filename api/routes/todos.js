@@ -10,18 +10,23 @@ const router = new Router({
 });
 
 router.get('/todos', async (ctx, next) => {
-    const todos = await Todo.find();
-    ctx.body = serialize(todos);
+    const todos = await Todo.find().select('name text _id');
+    const res = {
+        items: todos,
+        amount: todos.length
+    }
+
+    ctx.body = serialize(res, { space: 4 });
 });
 
 router.get('/todos/:todoId', async (ctx, next) => {
     const { todoId } = ctx.params;
 
     try {
-        const todo = await Todo.findById(todoId);
+        const todo = await Todo.findById(todoId).select('name text _id');
 
         if (todo) {
-            ctx.body = serialize(todo);
+            ctx.body = serialize(todo, { space: 4 });
         } else {
             ctx.status = 404;
             ctx.body = serialize({
@@ -39,19 +44,17 @@ router.patch('/todos/:todoId', async (ctx, next) => {
     try {
         const res = await Todo.findByIdAndUpdate(
             {
-            _id: todoId
+                _id: todoId
             },
             {
                 $set: ctx.request.body
             }
-        );
+        ).select('name text _id');;
 
         ctx.body = res;
     } catch (err) {
         ctx.body = err._message;
     }
-
-    ctx.body = `PATCH todo ${todoId}`;
 });
 
 router.del('/todos/:todoId', async (ctx, next) => {
