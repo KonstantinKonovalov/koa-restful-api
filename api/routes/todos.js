@@ -11,10 +11,7 @@ const router = new Router({
 
 router.get('/todos', async (ctx, next) => {
     const todos = await Todo.find();
-    ctx.body = serialize({
-        msg: 'GET todos',
-        todos
-    });
+    ctx.body = serialize(todos);
 });
 
 router.get('/todos/:todoId', async (ctx, next) => {
@@ -73,17 +70,13 @@ router.del('/todos/:todoId', async (ctx, next) => {
 
 router.post('/todos', async (ctx, next) => {
     const todo = new Todo({
-        _id: new mongoose.Types.ObjectId(),
         name: ctx.request.body.name,
         text: ctx.request.body.text
     });
 
     try {
         const res = await todo.save();
-        ctx.body = {
-            msg: 'successful POST todo',
-            createdTodo: res
-        };
+        ctx.body = res;
     } catch (err) {
         ctx.status = err.status || 500;
         ctx.body = {

@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
 
 const todosSchema = mongoose.Schema({
-    _id: mongoose.Schema.Types.ObjectId,
+    _id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        auto: true
+    },
     name: {
         type: String,
         required: true
@@ -9,4 +13,4 @@ const todosSchema = mongoose.Schema({
     text: String
 });
 
-module.exports.Todo = mongoose.model('Todos', todosSchema);
+module.exports.Todo = mongoose.model('Todos', todosSchema, 'todos');
