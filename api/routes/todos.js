@@ -79,9 +79,7 @@ router.post('/todos', async (ctx, next) => {
         ctx.body = res;
     } catch (err) {
         ctx.status = err.status || 500;
-        ctx.body = {
-            message: err._message
-        };
+        ctx.body = err.message;
     }
 });
 

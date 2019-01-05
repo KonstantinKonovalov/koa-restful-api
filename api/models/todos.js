@@ -8,9 +8,12 @@ const todosSchema = mongoose.Schema({
     },
     name: {
         type: String,
-        required: true
+        required: [true, 'Todo name is required']
     },
-    text: String
+    text: {
+        type: String,
+        required: [true, 'Todo text is required']
+    }
 });
 
 module.exports.Todo = mongoose.model('Todos', todosSchema, 'todos');
