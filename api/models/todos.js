@@ -13,6 +13,9 @@ const todosSchema = mongoose.Schema({
     text: {
         type: String,
         required: [true, 'Todo text is required']
+    },
+    todoImage: {
+        type: String
     }
 });
 
