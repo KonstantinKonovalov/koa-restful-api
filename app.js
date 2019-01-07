@@ -1,7 +1,7 @@
 const Koa = require('koa');
 const morgan = require('koa-morgan');
 const serialize = require('serialize-javascript');
-const bodyParser = require('koa-bodyparser');
+const bodyParser = require('koa-body');
 const cors = require('@koa/cors');
 
 const mongoose = require('mongoose');
