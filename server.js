@@ -5,4 +5,5 @@ const port = process.env.PORT || 80;
 
 const server = http.createServer(app.callback());
 
-server.listen(port);
+/* eslint-disable no-console */
+server.listen(port, () => console.log(`Server running on port: ${port}`));

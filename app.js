@@ -1,6 +1,5 @@
 const Koa = require('koa');
 const morgan = require('koa-morgan');
-const serialize = require('serialize-javascript');
 const bodyParser = require('koa-body');
 const cors = require('@koa/cors');
 
@@ -23,8 +22,8 @@ app.use(cors());
 app.use(rootRouter.routes());
 app.use(router.routes());
 
-app.use(async (ctx, next) => {
-    if (parseInt(ctx.status) === 404) {
+app.use(async (ctx, _next) => {
+    if (parseInt(ctx.status, 10) === 404) {
         ctx.status = 404;
         ctx.body = {
             error: {

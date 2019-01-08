@@ -16,6 +16,10 @@ const todosSchema = mongoose.Schema({
     },
     todoImage: {
         type: String
+    },
+    isDone: {
+        type: Boolean,
+        default: false
     }
 });
 

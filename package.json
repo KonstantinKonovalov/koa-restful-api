@@ -18,6 +18,24 @@
     "dev": "nodemon server"
   },
   "devDependencies": {
+    "eslint": "^5.12.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0",
     "nodemon": "^1.18.9"
+  },
+  "eslintConfig": {
+      "extends": "airbnb-base",
+      "rules": {
+          "linebreak-style": 0,
+          "indent": ["error", 4],
+          "comma-dangle": ["error", "never"],
+          "no-unused-vars": [
+              "error",
+              {
+                  "argsIgnorePattern": "^_"
+              }
+          ],
+          "no-underscore-dangle": 0
+      }
   }
 }
