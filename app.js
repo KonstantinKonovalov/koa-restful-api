@@ -1,6 +1,5 @@
 const Koa = require('koa');
 const morgan = require('koa-morgan');
-const bodyParser = require('koa-body');
 const cors = require('@koa/cors');
 
 const mongoose = require('mongoose');
@@ -16,7 +15,6 @@ mongoose.connect(`mongodb+srv://konstantin_konovalov:${process.env.DB_PASS}@mong
 });
 
 app.use(morgan('dev'));
-app.use(bodyParser());
 app.use(cors());
 
 app.use(rootRouter.routes());

@@ -15,7 +15,8 @@ const todosSchema = mongoose.Schema({
         required: [true, 'Todo text is required']
     },
     todoImage: {
-        type: String
+        type: String,
+        default: ''
     },
     isDone: {
         type: Boolean,

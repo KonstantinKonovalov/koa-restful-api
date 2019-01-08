@@ -89,14 +89,14 @@ router.post('/todos', bodyParser({
         uploadDir: 'uploads/',
         keepExtensions: true
     },
-    multipart: true,
+    multipart: false,
     strict: false,
     urlencoded: true
 }), async (ctx, _next) => {
     const todo = new Todo({
         name: ctx.request.body.name,
         text: ctx.request.body.text,
-        todoImage: ctx.request.files.todoImage.path
+        todoImage: ctx.request.files && ctx.request.files.todoImage.path
     });
 
     try {
