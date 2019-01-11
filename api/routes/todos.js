@@ -1,7 +1,13 @@
 const Router = require('koa-router');
 const serialize = require('serialize-javascript');
 const bodyParser = require('koa-body');
-const { Todo } = require('../models/todos');
+const {
+    getTodos,
+    patchTodo,
+    deleteTodo,
+    getTodoById,
+    createTodo
+} = require('../models/todos');
 
 
 const router = new Router({
@@ -21,8 +27,7 @@ router.post('/upload', bodyParser({
 });
 
 router.get('/todos', async (ctx, _next) => {
-    const todos = await Todo.find()
-        .select('_id name text todoImage isDone');
+    const todos = await getTodos();
     const res = {
         items: todos,
         amount: todos.length
@@ -35,8 +40,7 @@ router.get('/todos/:todoId', async (ctx, _next) => {
     const { todoId } = ctx.params;
 
     try {
-        const todo = await Todo.findById(todoId)
-            .select('_id name text todoImage isDone');
+        const todo = await getTodoById(todoId);
 
         if (todo) {
             ctx.body = serialize(todo, { space: 4 });
@@ -55,14 +59,7 @@ router.patch('/todos/:todoId', async (ctx, _next) => {
     const { todoId } = ctx.params;
 
     try {
-        const res = await Todo.findByIdAndUpdate(
-            {
-                _id: todoId
-            },
-            {
-                $set: ctx.request.body
-            }
-        ).select('_id name text todoImage isDone');
+        const res = await patchTodo(todoId, ctx.request.body);
 
         ctx.body = res;
     } catch (err) {
@@ -74,9 +71,7 @@ router.del('/todos/:todoId', async (ctx, _next) => {
     const { todoId } = ctx.params;
 
     try {
-        const res = await Todo.findByIdAndDelete({
-            _id: todoId
-        });
+        const res = await deleteTodo(todoId);
 
         ctx.body = res;
     } catch (err) {
@@ -93,11 +88,8 @@ router.post('/todos', bodyParser({
     strict: false,
     urlencoded: true
 }), async (ctx, _next) => {
-    const todo = new Todo({
-        name: ctx.request.body.name,
-        text: ctx.request.body.text,
-        todoImage: ctx.request.files && ctx.request.files.todoImage.path
-    });
+    const { name, text } = ctx.request.body;
+    const todo = createTodo(name, text, ctx.request.files && ctx.request.files.todoImage.path);
 
     try {
         const res = await todo.save();
