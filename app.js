@@ -4,7 +4,7 @@ const cors = require('@koa/cors');
 
 const mongoose = require('mongoose');
 
-const { router } = require('./api/routes/todos');
+const { router } = require('./api/routes/products');
 const { rootRouter } = require('./api/routes');
 
 const app = new Koa();

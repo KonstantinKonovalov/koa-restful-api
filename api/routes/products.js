@@ -2,12 +2,12 @@ const Router = require('koa-router');
 const serialize = require('serialize-javascript');
 const bodyParser = require('koa-body');
 const {
-    getTodos,
-    patchTodo,
-    deleteTodo,
-    getTodoById,
-    createTodo
-} = require('../models/todos');
+    getProducts,
+    patchProduct,
+    deleteProduct,
+    getProductById,
+    createProduct
+} = require('../models/products');
 
 
 const router = new Router({
@@ -26,28 +26,28 @@ router.post('/upload', bodyParser({
     ctx.body = serialize(ctx.request.files.uploadedImage);
 });
 
-router.get('/todos', async (ctx, _next) => {
-    const todos = await getTodos();
+router.get('/products', async (ctx, _next) => {
+    const products = await getProducts();
     const res = {
-        items: todos,
-        amount: todos.length
+        items: products,
+        amount: products.length
     };
 
     ctx.body = serialize(res, { space: 4 });
 });
 
-router.get('/todos/:todoId', async (ctx, _next) => {
-    const { todoId } = ctx.params;
+router.get('/products/:productId', async (ctx, _next) => {
+    const { productId } = ctx.params;
 
     try {
-        const todo = await getTodoById(todoId);
+        const product = await getProductById(productId);
 
-        if (todo) {
-            ctx.body = serialize(todo, { space: 4 });
+        if (product) {
+            ctx.body = serialize(product, { space: 4 });
         } else {
             ctx.status = 404;
             ctx.body = serialize({
-                message: 'No Todo found for provided ID'
+                message: 'No Product found for provided ID'
             });
         }
     } catch (err) {
@@ -55,11 +55,11 @@ router.get('/todos/:todoId', async (ctx, _next) => {
     }
 });
 
-router.patch('/todos/:todoId', async (ctx, _next) => {
-    const { todoId } = ctx.params;
+router.patch('/products/:productId', async (ctx, _next) => {
+    const { productId } = ctx.params;
 
     try {
-        const res = await patchTodo(todoId, ctx.request.body);
+        const res = await patchProduct(productId, ctx.request.body);
 
         ctx.body = res;
     } catch (err) {
@@ -67,11 +67,11 @@ router.patch('/todos/:todoId', async (ctx, _next) => {
     }
 });
 
-router.del('/todos/:todoId', async (ctx, _next) => {
-    const { todoId } = ctx.params;
+router.del('/products/:productId', async (ctx, _next) => {
+    const { productId } = ctx.params;
 
     try {
-        const res = await deleteTodo(todoId);
+        const res = await deleteProduct(productId);
 
         ctx.body = res;
     } catch (err) {
@@ -79,7 +79,7 @@ router.del('/todos/:todoId', async (ctx, _next) => {
     }
 });
 
-router.post('/todos', bodyParser({
+router.post('/products', bodyParser({
     formidable: {
         uploadDir: 'uploads/',
         keepExtensions: true
@@ -88,11 +88,15 @@ router.post('/todos', bodyParser({
     strict: false,
     urlencoded: true
 }), async (ctx, _next) => {
-    const { name, text } = ctx.request.body;
-    const todo = createTodo(name, text, ctx.request.files && ctx.request.files.todoImage.path);
+    const { name, description } = ctx.request.body;
+    const product = createProduct(
+        name,
+        description,
+        ctx.request.files && ctx.request.files.todoImage.path
+    );
 
     try {
-        const res = await todo.save();
+        const res = await product.save();
         ctx.body = res;
     } catch (err) {
         ctx.status = err.status || 500;
