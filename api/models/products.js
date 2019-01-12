@@ -47,7 +47,6 @@ const createProduct = (name, description, imagePath) => new Product({
     path: imagePath
 });
 
-module.exports.Product = Product;
 module.exports.getProducts = getProducts;
 module.exports.patchProduct = patchProduct;
 module.exports.deleteProduct = deleteProduct;
