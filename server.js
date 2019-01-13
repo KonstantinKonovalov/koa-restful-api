@@ -3,7 +3,7 @@ const { app } = require('./app');
 
 const port = process.env.PORT || 80;
 
-const server = http.createServer(app.callback());
 
-/* eslint-disable no-console */
-server.listen(port, () => console.log(`Server running on port: ${port}`));
+const server = http.createServer(app.callback()).listen(port);
+
+module.exports.server = server;

@@ -6,6 +6,7 @@
   "license": "MIT",
   "dependencies": {
     "@koa/cors": "2",
+    "dotenv": "^6.2.0",
     "koa": "^2.6.2",
     "koa-body": "^4.0.6",
     "koa-bodyparser": "^4.2.1",
@@ -15,28 +16,40 @@
     "serialize-javascript": "^1.6.0"
   },
   "scripts": {
-    "dev": "nodemon server"
+    "dev": "nodemon server",
+    "test": "jest"
   },
   "devDependencies": {
     "eslint": "^5.12.0",
     "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
-    "nodemon": "^1.18.9"
+    "jest": "^23.6.0",
+    "nodemon": "^1.18.9",
+    "supertest": "^3.3.0"
   },
   "eslintConfig": {
-      "root": true,
-      "extends": "airbnb-base",
-      "rules": {
-          "linebreak-style": 0,
-          "indent": ["error", 4],
-          "comma-dangle": ["error", "never"],
-          "no-unused-vars": [
-              "error",
-              {
-                  "argsIgnorePattern": "^_"
-              }
-          ],
-          "no-underscore-dangle": 0
-      }
+    "root": true,
+    "extends": "airbnb-base",
+    "rules": {
+      "linebreak-style": 0,
+      "indent": [
+        "error",
+        4
+      ],
+      "comma-dangle": [
+        "error",
+        "never"
+      ],
+      "no-unused-vars": [
+        "error",
+        {
+          "argsIgnorePattern": "^_"
+        }
+      ],
+      "no-underscore-dangle": 0
+    }
+  },
+  "jest": {
+    "testEnvironment": "node"
   }
 }

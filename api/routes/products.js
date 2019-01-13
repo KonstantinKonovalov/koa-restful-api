@@ -33,6 +33,7 @@ router.get('/products', async (ctx, _next) => {
         amount: products.length
     };
 
+    ctx.type = 'application/json';
     ctx.body = serialize(res, { space: 4 });
 });
 

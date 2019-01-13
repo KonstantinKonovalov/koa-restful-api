@@ -1,3 +1,4 @@
+require('dotenv').config();
 const Koa = require('koa');
 const morgan = require('koa-morgan');
 const cors = require('@koa/cors');
