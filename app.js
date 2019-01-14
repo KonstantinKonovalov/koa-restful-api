@@ -12,7 +12,7 @@ const app = new Koa();
 
 mongoose.connect(`mongodb+srv://konstantin_konovalov:${process.env.DB_PASS}@mongodbcluster-vasux.mongodb.net/test?retryWrites=true`, {
     useNewUrlParser: true,
-    dbName: 'TodosDB'
+    dbName: 'ProductsDB'
 });
 
 app.use(morgan('dev'));

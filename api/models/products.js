@@ -20,7 +20,7 @@ const productSchema = mongoose.Schema({
     }
 });
 
-const Product = mongoose.model('Todos', productSchema, 'products');
+const Product = mongoose.model('Products', productSchema, 'products');
 
 const getProducts = () => Product.find().select('_id name description productImage');
 
