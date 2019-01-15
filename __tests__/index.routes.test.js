@@ -5,9 +5,9 @@ const { app } = require('../app');
 
 let server;
 
-beforeAll((done) => {
+beforeAll(() => {
     server = http.createServer(app.callback());
-    server.listen(done);
+    server.listen();
 });
 
 afterAll(() => {
