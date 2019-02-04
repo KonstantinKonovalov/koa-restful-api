@@ -5,8 +5,9 @@ const cors = require('@koa/cors');
 
 const mongoose = require('mongoose');
 
-const { router } = require('./api/routes/products');
+const { productsRouter } = require('./api/routes/products');
 const { rootRouter } = require('./api/routes');
+const { userRouter } = require('./api/routes/user');
 
 const app = new Koa();
 
@@ -19,7 +20,8 @@ app.use(morgan('dev'));
 app.use(cors());
 
 app.use(rootRouter.routes());
-app.use(router.routes());
+app.use(productsRouter.routes());
+app.use(userRouter.routes());
 
 app.use(async (ctx, _next) => {
     if (parseInt(ctx.status, 10) === 404) {

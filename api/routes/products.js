@@ -105,4 +105,4 @@ router.post('/products', bodyParser({
     }
 });
 
-module.exports.router = router;
+module.exports.productsRouter = router;
