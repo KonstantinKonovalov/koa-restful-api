@@ -21,5 +21,8 @@ const User = mongoose.model('User', userSchema, 'userCollection');
 const createUser = (email, password) => new User({ email, password });
 
 const getUsers = () => User.find({}).select('_id email password');
-module.exports.createUser = createUser;
-module.exports.getUsers = getUsers;
+
+module.exports = {
+    createUser,
+    getUsers
+};
