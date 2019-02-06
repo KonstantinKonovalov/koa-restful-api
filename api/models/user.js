@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+mongoose.set('useCreateIndex', true);
+
 const userSchema = mongoose.Schema({
     _id: {
         type: mongoose.Schema.Types.ObjectId,
@@ -8,7 +10,8 @@ const userSchema = mongoose.Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     password: {
         type: String,
@@ -22,7 +25,10 @@ const createUser = (email, password) => new User({ email, password });
 
 const getUsers = () => User.find({}).select('_id email password');
 
+const deleteUser = id => User.findByIdAndDelete({ _id: id });
+
 module.exports = {
     createUser,
-    getUsers
+    getUsers,
+    deleteUser
 };
