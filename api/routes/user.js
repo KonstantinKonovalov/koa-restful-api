@@ -2,10 +2,12 @@ const Router = require('koa-router');
 const serialize = require('serialize-javascript');
 const bodyParser = require('koa-body');
 const crypto = require('crypto');
+const jwt = require('jsonwebtoken');
 const {
     createUser,
     getUsers,
-    deleteUser
+    deleteUser,
+    findUserByEmail
 } = require('../models/user');
 
 
@@ -24,9 +26,10 @@ router.post('/signup', bodyParser(), async (ctx, _next) => {
     const { email, password } = ctx.request.body;
 
     const salt = crypto.randomBytes(16).toString('hex');
-    const hashPswd = crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex');
+    const iterations = 1000;
+    const hash = crypto.pbkdf2Sync(password, salt, iterations, 64, 'sha512').toString('hex');
 
-    const user = createUser(email, hashPswd);
+    const user = createUser(email, { salt, hash, iterations });
 
     try {
         const res = await user.save();
@@ -35,6 +38,51 @@ router.post('/signup', bodyParser(), async (ctx, _next) => {
         ctx.status = err.status || 500;
         ctx.body = err.message;
     }
+});
+
+router.post('/login', bodyParser(), async (ctx, next) => {
+    const { email, password } = ctx.request.body;
+
+    try {
+        const user = await findUserByEmail(email);
+        if (!user) {
+            ctx.status = 401;
+            ctx.body = serialize({
+                message: 'Auth failed'
+            });
+            return next();
+        }
+
+        const { salt, iterations, hash } = user.password;
+
+        const attemptedHash = crypto.pbkdf2Sync(password, salt, iterations, 64, 'sha512').toString('hex');
+
+        if (hash === attemptedHash) {
+            const token = jwt.sign({
+                email: user.email,
+                userId: user._id
+            },
+            process.env.JWT_KEY,
+            {
+                expiresIn: '1h'
+            });
+            ctx.status = 200;
+            ctx.body = serialize({
+                message: 'Auth successfull',
+                token
+            });
+        } else {
+            ctx.status = 401;
+            ctx.body = serialize({
+                message: 'Auth failed'
+            });
+        }
+    } catch (err) {
+        ctx.status = err.status || 500;
+        ctx.body = err.message;
+    }
+
+    return next();
 });
 
 router.del('/users/:userId', async (ctx, _next) => {

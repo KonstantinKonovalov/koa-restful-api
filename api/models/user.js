@@ -15,7 +15,11 @@ const userSchema = mongoose.Schema({
         match: /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/
     },
     password: {
-        type: String,
+        type: {
+            hash: String,
+            iterations: Number,
+            salt: String
+        },
         required: true
     }
 });
@@ -28,8 +32,11 @@ const getUsers = () => User.find({}).select('_id email password');
 
 const deleteUser = id => User.findByIdAndDelete({ _id: id });
 
+const findUserByEmail = email => User.findOne({ email });
+
 module.exports = {
     createUser,
     getUsers,
-    deleteUser
+    deleteUser,
+    findUserByEmail
 };
