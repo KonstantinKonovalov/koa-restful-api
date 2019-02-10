@@ -11,6 +11,8 @@ const { userRouter } = require('./api/routes/user');
 
 const app = new Koa();
 
+app.keys = [process.env.JWT_KEY];
+
 mongoose.connect(`mongodb+srv://konstantin_konovalov:${process.env.DB_PASS}@mongodbcluster-vasux.mongodb.net/test?retryWrites=true`, {
     useNewUrlParser: true,
     dbName: process.env.NODE_ENV !== 'test' ? 'ProductsDB' : 'TestDB'

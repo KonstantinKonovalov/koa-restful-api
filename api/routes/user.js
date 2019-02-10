@@ -40,6 +40,7 @@ router.post('/signup', bodyParser(), async (ctx, _next) => {
     }
 });
 
+// eslint-disable-next-line consistent-return
 router.post('/login', bodyParser(), async (ctx, next) => {
     const { email, password } = ctx.request.body;
 
@@ -67,6 +68,10 @@ router.post('/login', bodyParser(), async (ctx, next) => {
                 expiresIn: '1h'
             });
             ctx.status = 200;
+            ctx.cookies.set(
+                'token',
+                token
+            );
             ctx.body = serialize({
                 message: 'Auth successfull',
                 token
@@ -81,8 +86,6 @@ router.post('/login', bodyParser(), async (ctx, next) => {
         ctx.status = err.status || 500;
         ctx.body = err.message;
     }
-
-    return next();
 });
 
 router.del('/users/:userId', async (ctx, _next) => {

@@ -1,6 +1,7 @@
 const Router = require('koa-router');
 const serialize = require('serialize-javascript');
 const bodyParser = require('koa-body');
+const { checkAuth } = require('../../middleware/check-auth');
 const {
     getProducts,
     patchProduct,
@@ -14,7 +15,7 @@ const router = new Router({
     prefix: '/api/v1'
 });
 
-router.post('/upload', bodyParser({
+router.post('/upload', checkAuth, bodyParser({
     formidable: {
         uploadDir: 'uploads/',
         keepExtensions: true
@@ -56,7 +57,7 @@ router.get('/products/:productId', async (ctx, _next) => {
     }
 });
 
-router.patch('/products/:productId', async (ctx, _next) => {
+router.patch('/products/:productId', checkAuth, async (ctx, _next) => {
     const { productId } = ctx.params;
 
     try {
@@ -68,7 +69,7 @@ router.patch('/products/:productId', async (ctx, _next) => {
     }
 });
 
-router.del('/products/:productId', async (ctx, _next) => {
+router.del('/products/:productId', checkAuth, async (ctx, _next) => {
     const { productId } = ctx.params;
 
     try {
@@ -80,7 +81,7 @@ router.del('/products/:productId', async (ctx, _next) => {
     }
 });
 
-router.post('/products', bodyParser({
+router.post('/products', checkAuth, bodyParser({
     formidable: {
         uploadDir: 'uploads/',
         keepExtensions: true
