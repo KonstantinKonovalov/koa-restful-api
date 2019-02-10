@@ -1,103 +1,18 @@
 const Router = require('koa-router');
-const serialize = require('serialize-javascript');
 const bodyParser = require('koa-body');
-const crypto = require('crypto');
-const jwt = require('jsonwebtoken');
-const {
-    createUser,
-    getUsers,
-    deleteUser,
-    findUserByEmail
-} = require('../models/user');
+const UserController = require('../../controllers/UserController');
 
 
 const router = new Router({
     prefix: '/api/v1'
 });
 
-router.get('/users', async (ctx, _next) => {
-    const users = await getUsers();
+router.get('/users', UserController.getAllUsers);
 
-    ctx.type = 'application/json';
-    ctx.body = serialize(users, { space: 4 });
-});
+router.post('/signup', bodyParser(), UserController.signupUser);
 
-router.post('/signup', bodyParser(), async (ctx, _next) => {
-    const { email, password } = ctx.request.body;
+router.post('/login', bodyParser(), UserController.loginUser);
 
-    const salt = crypto.randomBytes(16).toString('hex');
-    const iterations = 1000;
-    const hash = crypto.pbkdf2Sync(password, salt, iterations, 64, 'sha512').toString('hex');
-
-    const user = createUser(email, { salt, hash, iterations });
-
-    try {
-        const res = await user.save();
-        ctx.body = res;
-    } catch (err) {
-        ctx.status = err.status || 500;
-        ctx.body = err.message;
-    }
-});
-
-// eslint-disable-next-line consistent-return
-router.post('/login', bodyParser(), async (ctx, next) => {
-    const { email, password } = ctx.request.body;
-
-    try {
-        const user = await findUserByEmail(email);
-        if (!user) {
-            ctx.status = 401;
-            ctx.body = serialize({
-                message: 'Auth failed'
-            });
-            return next();
-        }
-
-        const { salt, iterations, hash } = user.password;
-
-        const attemptedHash = crypto.pbkdf2Sync(password, salt, iterations, 64, 'sha512').toString('hex');
-
-        if (hash === attemptedHash) {
-            const token = jwt.sign({
-                email: user.email,
-                userId: user._id
-            },
-            process.env.JWT_KEY,
-            {
-                expiresIn: '1h'
-            });
-            ctx.status = 200;
-            ctx.cookies.set(
-                'token',
-                token
-            );
-            ctx.body = serialize({
-                message: 'Auth successfull',
-                token
-            });
-        } else {
-            ctx.status = 401;
-            ctx.body = serialize({
-                message: 'Auth failed'
-            });
-        }
-    } catch (err) {
-        ctx.status = err.status || 500;
-        ctx.body = err.message;
-    }
-});
-
-router.del('/users/:userId', async (ctx, _next) => {
-    const { userId } = ctx.params;
-
-    try {
-        const res = await deleteUser(userId);
-
-        ctx.body = res;
-    } catch (err) {
-        ctx.body = err._message;
-    }
-});
+router.del('/users/:userId', UserController.removeUser);
 
 module.exports.userRouter = router;
