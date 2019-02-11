@@ -5,9 +5,12 @@ const { app } = require('../app');
 
 let server;
 
-beforeAll(() => {
+beforeAll(async () => {
     server = http.createServer(app.callback());
     server.listen();
+
+    const db = mongoose.connection;
+    await db.dropCollection('userCollection');
 });
 
 afterAll(() => {
@@ -35,5 +38,22 @@ describe('routes: /products', () => {
         expect(response.body).toEqual(
             expect.arrayContaining([])
         );
+    });
+});
+
+describe('routes: /signup', () => {
+    test('should respond json from post signup request', async () => {
+        const user = {
+            email: 'test@test.com',
+            password: 'testpassword'
+        };
+        const response = await request(server)
+            .post('/api/v1/signup')
+            .set('Accept', 'application/json')
+            .send(user);
+
+        expect(response.status).toEqual(200);
+        expect(response.type).toEqual('application/json');
+        expect(response.body).toBeDefined();
     });
 });
