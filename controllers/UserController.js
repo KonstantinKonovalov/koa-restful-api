@@ -41,6 +41,7 @@ const loginUser = async (ctx, next) => {
         const user = await findUserByEmail(email);
         if (!user) {
             ctx.status = 401;
+            ctx.type = 'application/json';
             ctx.body = serialize({
                 message: 'Auth failed'
             });
@@ -60,17 +61,21 @@ const loginUser = async (ctx, next) => {
             {
                 expiresIn: '1h'
             });
+
             ctx.status = 200;
             ctx.cookies.set(
                 'token',
                 token
             );
+
+            ctx.type = 'application/json';
             ctx.body = serialize({
                 message: 'Auth successfull',
                 token
             });
         } else {
             ctx.status = 401;
+            ctx.type = 'application/json';
             ctx.body = serialize({
                 message: 'Auth failed'
             });

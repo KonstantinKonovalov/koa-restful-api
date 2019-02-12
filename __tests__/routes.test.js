@@ -40,17 +40,14 @@ describe('routes: index', () => {
     });
 });
 
-describe('routes: /products', () => {
+describe('routes: /products without auth', () => {
     it('should respond json from GET request', async () => {
         const response = await request(server).get('/api/v1/products');
         expect(response.status).toEqual(200);
         expect(response.type).toEqual('application/json');
         expect(response.body).toBeDefined();
-        expect(response.body).toHaveProperty('items');
-        expect(response.body).toHaveProperty('amount');
-        expect(response.body).toEqual(
-            expect.arrayContaining([])
-        );
+        expect(response.body).toHaveProperty('items', []);
+        expect(response.body).toHaveProperty('amount', 0);
     });
 
     it('should fail to post product without login', async () => {
@@ -76,5 +73,49 @@ describe('routes: /signup', () => {
         expect(response.status).toEqual(200);
         expect(response.type).toEqual('application/json');
         expect(response.body).toBeDefined();
+    });
+});
+
+describe('routes: /login', () => {
+    it('should fail login user with wrong password', async () => {
+        const response = await request(server)
+            .post('/api/v1/login')
+            .set('Accept', 'application/json')
+            .send({
+                ...global.user,
+                password: 'wrong password'
+            });
+
+        expect(response.status).toEqual(401);
+        expect(response.type).toEqual('application/json');
+        expect(response.body).toBeDefined();
+        expect(response.body).toHaveProperty('message', 'Auth failed');
+    });
+
+    it('should success login user', async () => {
+        const response = await request(server)
+            .post('/api/v1/login')
+            .set('Accept', 'application/json')
+            .send(global.user);
+
+        expect(response.status).toEqual(200);
+        expect(response.type).toEqual('application/json');
+        expect(response.body).toBeDefined();
+    });
+});
+
+// TODO: auth failed - cookies = undefined ?
+
+describe('routes: /products with auth', () => {
+    it('should success post product', async () => {
+        const response = await request(server)
+            .post('/api/v1/products')
+            .set('Accept', 'application/json')
+            .send(global.product);
+
+        expect(response.status).toEqual(200);
+        expect(response.type).toEqual('application/json');
+        expect(response.body).toBeDefined();
+        expect(response.body).toHaveProperty('amount', 1);
     });
 });
