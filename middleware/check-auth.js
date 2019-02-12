@@ -11,6 +11,7 @@ module.exports.checkAuth = (ctx, next) => {
         return next();
     } catch (err) {
         ctx.status = 401;
+        ctx.type = 'application/json';
         ctx.body = serialize({
             message: 'Auth failed'
         });

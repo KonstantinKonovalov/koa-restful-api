@@ -9,13 +9,26 @@ beforeAll(async () => {
     server = http.createServer(app.callback());
     server.listen();
 
+    global.user = {
+        email: 'test@test.com',
+        password: 'testpassword'
+    };
+
+    global.product = {
+        name: 'some product name',
+        description: 'some product description'
+    };
+
     const db = mongoose.connection;
-    await db.dropCollection('userCollection');
+    await db.dropDatabase();
 });
 
 afterAll(() => {
     mongoose.disconnect();
     server.close();
+
+    delete global.user;
+    delete global.product;
 });
 
 describe('routes: index', () => {
@@ -28,7 +41,7 @@ describe('routes: index', () => {
 });
 
 describe('routes: /products', () => {
-    test('should respond json from GET request', async () => {
+    it('should respond json from GET request', async () => {
         const response = await request(server).get('/api/v1/products');
         expect(response.status).toEqual(200);
         expect(response.type).toEqual('application/json');
@@ -39,18 +52,26 @@ describe('routes: /products', () => {
             expect.arrayContaining([])
         );
     });
+
+    it('should fail to post product without login', async () => {
+        const response = await request(server)
+            .post('/api/v1/products')
+            .set('Accept', 'application/json')
+            .send(global.product);
+
+        expect(response.status).toEqual(401);
+        expect(response.type).toEqual('application/json');
+        expect(response.body).toBeDefined();
+        expect(response.body).toHaveProperty('message', 'Auth failed');
+    });
 });
 
 describe('routes: /signup', () => {
-    test('should respond json from post signup request', async () => {
-        const user = {
-            email: 'test@test.com',
-            password: 'testpassword'
-        };
+    it('should respond json from post signup request', async () => {
         const response = await request(server)
             .post('/api/v1/signup')
             .set('Accept', 'application/json')
-            .send(user);
+            .send(global.user);
 
         expect(response.status).toEqual(200);
         expect(response.type).toEqual('application/json');
