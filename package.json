@@ -37,6 +37,7 @@
         "error",
         4
       ],
+      "operator-linebreak": ["error", "after"],
       "comma-dangle": [
         "error",
         "never"
