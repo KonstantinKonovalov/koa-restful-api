@@ -1,11 +1,15 @@
 const request = require('supertest');
 const mongoose = require('mongoose');
 const http = require('http');
+const chai = require('chai');
 const { app } = require('../app');
+
+const { expect } = chai;
 
 let server;
 
-beforeAll(async () => {
+before(async () => {
+    console.log('-------------', process.env.NODE_ENV)
     server = http.createServer(app.callback());
     server.listen();
 
@@ -23,7 +27,7 @@ beforeAll(async () => {
     await db.dropDatabase();
 });
 
-afterAll(() => {
+after(() => {
     mongoose.disconnect();
     server.close();
 
@@ -34,20 +38,20 @@ afterAll(() => {
 describe('routes: index', () => {
     it('should respond success message', async () => {
         const response = await request(server).get('/');
-        expect(response.status).toEqual(200);
-        expect(response.body.message).toBeDefined();
-        expect(response.body.message).toEqual('Success');
+        expect(response.status).equal(200);
+        // expect(response.body.message).toBeDefined();
+        expect(response.body.message).equal('Success');
     });
 });
 
 describe('routes: /products without auth', () => {
     it('should respond json from GET request', async () => {
         const response = await request(server).get('/api/v1/products');
-        expect(response.status).toEqual(200);
-        expect(response.type).toEqual('application/json');
-        expect(response.body).toBeDefined();
-        expect(response.body).toHaveProperty('items', []);
-        expect(response.body).toHaveProperty('amount', 0);
+        expect(response.status).equal(200);
+        expect(response.type).equal('application/json');
+        // expect(response.body).toBeDefined();
+        expect(response.body).to.have.property('items').that.deep.equals([]);
+        expect(response.body).to.have.property('amount').that.equals(0);
     });
 
     it('should fail to post product without login', async () => {
@@ -56,10 +60,10 @@ describe('routes: /products without auth', () => {
             .set('Accept', 'application/json')
             .send(global.product);
 
-        expect(response.status).toEqual(401);
-        expect(response.type).toEqual('application/json');
-        expect(response.body).toBeDefined();
-        expect(response.body).toHaveProperty('message', 'Auth failed');
+        expect(response.status).equal(401);
+        expect(response.type).equal('application/json');
+        // expect(response.body).toBeDefined();
+        expect(response.body).to.have.property('message').that.equals('Auth failed');
     });
 });
 
@@ -70,9 +74,9 @@ describe('routes: /signup', () => {
             .set('Accept', 'application/json')
             .send(global.user);
 
-        expect(response.status).toEqual(200);
-        expect(response.type).toEqual('application/json');
-        expect(response.body).toBeDefined();
+        expect(response.status).equal(200);
+        expect(response.type).equal('application/json');
+        // expect(response.body).toBeDefined();
     });
 });
 
@@ -86,10 +90,10 @@ describe('routes: /login', () => {
                 password: 'wrong password'
             });
 
-        expect(response.status).toEqual(401);
-        expect(response.type).toEqual('application/json');
-        expect(response.body).toBeDefined();
-        expect(response.body).toHaveProperty('message', 'Auth failed');
+        expect(response.status).equal(401);
+        expect(response.type).equal('application/json');
+        // expect(response.body).toBeDefined();
+        expect(response.body).to.have.property('message').that.equals('Auth failed');
     });
 
     it('should success login user', async () => {
@@ -98,24 +102,29 @@ describe('routes: /login', () => {
             .set('Accept', 'application/json')
             .send(global.user);
 
-        expect(response.status).toEqual(200);
-        expect(response.type).toEqual('application/json');
-        expect(response.body).toBeDefined();
+        expect(response.status).equal(200);
+        expect(response.type).equal('application/json');
+        // expect(response.body).toBeDefined();
     });
 });
 
-// TODO: auth failed - cookies = undefined ?
+// // TODO: auth failed - cookies = undefined ?
 
 describe('routes: /products with auth', () => {
     it('should success post product', async () => {
+        const loginResponse = await request(server)
+            .post('/api/v1/login')
+            .set('Accept', 'application/json')
+            .send(global.user);
+
         const response = await request(server)
             .post('/api/v1/products')
             .set('Accept', 'application/json')
             .send(global.product);
 
-        expect(response.status).toEqual(200);
-        expect(response.type).toEqual('application/json');
-        expect(response.body).toBeDefined();
-        expect(response.body).toHaveProperty('amount', 1);
+        expect(response.status).equal(200);
+        expect(response.type).equal('application/json');
+        // expect(response.body).toBeDefined();
+        expect(response.body).to.have.property('amount').that.equals(1);
     });
 });

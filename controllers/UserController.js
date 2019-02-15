@@ -65,8 +65,13 @@ const loginUser = async (ctx, next) => {
             ctx.status = 200;
             ctx.cookies.set(
                 'token',
-                token
+                token, 
+                {
+                    httpOnly: false
+                }
             );
+
+            ctx.token = token;
 
             ctx.type = 'application/json';
             ctx.body = serialize({
